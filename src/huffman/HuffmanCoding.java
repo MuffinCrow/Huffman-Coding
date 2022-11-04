@@ -108,190 +108,39 @@ public class HuffmanCoding {
     }
 
     public void makeTree() {
-        ArrayList<TreeNode> target = new ArrayList<>();
-        TreeNode fir;
-        TreeNode sec;
+        Queue<TreeNode> target = new Queue<>();
+        TreeNode l = null;
+        TreeNode r = null;
 
-        while (sortedCharFreqList.size() > 0) {
-            /*
-             * if (target.size() > 2) {
-             * while (target.size() > 1) {
-             * fir = target.remove(0);
-             * sec = target.remove(0);
-             * 
-             * TreeNode anal = new TreeNode(
-             * new CharFreq(null, fir.getData().getProbOcc() + sec.getData().getProbOcc()),
-             * fir, sec);
-             * 
-             * target.add(anal);
-             * 
-             * target = eh(target);
-             * }
-             * } else {
-             */
-            if (target.size() > 0) {
-                if (target.size() > 1 && sortedCharFreqList.size() <= 0) {
-                    target = eh(target);
-                    break;
-                }
-                // if (target.size() > 1 && sortedCharFreqList.size() <= 0)
-                int sortC = 0, tarC = 0;
-                fir = new TreeNode(sortedCharFreqList.get(sortC), null, null);
-                sortC++;
-                if (sortedCharFreqList.size() > 1) {
-                    sec = new TreeNode(sortedCharFreqList.get(sortC), null, null);
-                    sortC++;
+        while (sortedCharFreqList.size() > 0 || target.size() > 1 || l != null || r != null) {
+            if (l == null) {
+                if (target.size() == 0) {
+                    l = new TreeNode(sortedCharFreqList.remove(0), null, null);
+                } else if (sortedCharFreqList.size() == 0) {
+                    l = target.dequeue();
                 } else {
-                    sec = target.get(tarC);
-                    tarC++;
+                    l = (target.peek().getData().getProbOcc() < sortedCharFreqList.get(0).getProbOcc())
+                            ? target.dequeue()
+                            : new TreeNode(sortedCharFreqList.remove(0), null, null);
                 }
-
-                while (sortC < sortedCharFreqList.size()) {
-                    if (sortedCharFreqList.get(sortC).getProbOcc() < sec.getData().getProbOcc()) {
-                        if (sortedCharFreqList.get(sortC).getProbOcc() < fir.getData().getProbOcc()) {
-                            sec = fir;
-                            fir = new TreeNode(sortedCharFreqList.get(sortC), null, null);
-                        } else {
-                            sec = new TreeNode(sortedCharFreqList.get(sortC), null, null);
-                        }
-                    }
-                    sortC++;
-                }
-
-                while (tarC < target.size()) {
-                    if (target.get(tarC).getData().getProbOcc() < sec.getData().getProbOcc()) {
-                        if (target.get(tarC).getData().getProbOcc() < fir.getData().getProbOcc()) {
-                            sec = fir;
-                            fir = target.get(tarC);
-                        } else {
-                            sec = target.get(tarC);
-                        }
-                    }
-                    tarC++;
+            } else if (r == null) {
+                if (target.size() == 0) {
+                    r = new TreeNode(sortedCharFreqList.remove(0), null, null);
+                } else if (sortedCharFreqList.size() == 0) {
+                    r = target.dequeue();
+                } else {
+                    r = (target.peek().getData().getProbOcc() < sortedCharFreqList.get(0).getProbOcc())
+                            ? target.dequeue()
+                            : new TreeNode(sortedCharFreqList.remove(0), null, null);
                 }
             } else {
-                fir = new TreeNode(sortedCharFreqList.get(0), null, null);
-                if (sortedCharFreqList.size() > 1) {
-                    sec = new TreeNode(sortedCharFreqList.get(1), null, null);
-                } else {
-                    huffmanRoot = fir;
-                    sortedCharFreqList.clear();
-                    break;
-                }
-
+                target.enqueue(
+                        new TreeNode(new CharFreq(null, l.getData().getProbOcc() + r.getData().getProbOcc()), l, r));
+                l = null;
+                r = null;
             }
-            target = killMe(fir, target);
-            target = killMe(sec, target);
-            target.add(new TreeNode(new CharFreq(null, fir.getData().getProbOcc() + sec.getData().getProbOcc()),
-                    fir, sec));
-            if (target.size() > 1) {
-                target = eh(target);
-            }
-            // }
-            /*
-             * firSor = false;
-             * secSor = false;
-             * System.out.println(sortedCharFreqList.get(0).getProbOcc());
-             * fir = new TreeNode(sortedCharFreqList.get(0), null, null);
-             * 
-             * if (sortedCharFreqList.size() > 1) {
-             * sec = new TreeNode(sortedCharFreqList.get(1), null, null);
-             * 
-             * if (target.size() > 0) {
-             * if (target.size() > 1) {
-             * if (sec.getData().getProbOcc() >= target.get(0).getData().getProbOcc()) {
-             * if (fir.getData().getProbOcc() >= target.get(0).getData().getProbOcc()) {
-             * sec = fir;
-             * fir = target.remove(0);
-             * 
-             * if (sec.getData().getProbOcc() >= target.get(1).getData().getProbOcc()) {
-             * sec = target.remove(0);
-             * }
-             * } else {
-             * sec = target.remove(0);
-             * }
-             * }
-             * } else {
-             * if (sec.getData().getProbOcc() >= target.get(0).getData().getProbOcc()) {
-             * if (fir.getData().getProbOcc() > target.get(0).getData().getProbOcc()) {
-             * sec = fir;
-             * fir = target.remove(0);
-             * } else {
-             * sec = target.remove(0);
-             * }
-             * }
-             * }
-             * }
-             * if (sortedCharFreqList.indexOf(sec.getData()) >= 0) {
-             * sortedCharFreqList.remove(sortedCharFreqList.indexOf(sec.getData()));
-             * }
-             * } else {
-             * 
-             * if (target.size() > 1) {
-             * if (fir.getData().getProbOcc() >= target.get(1).getData().getProbOcc()) {
-             * fir = target.remove(0);
-             * sec = target.remove(0);
-             * } else {
-             * if (fir.getData().getProbOcc() >= target.get(0).getData().getProbOcc()) {
-             * sec = fir;
-             * fir = target.remove(0);
-             * } else {
-             * sec = target.remove(0);
-             * }
-             * }
-             * } else {
-             * if (fir.getData().getProbOcc() >= target.get(0).getData().getProbOcc()) {
-             * sec = fir;
-             * fir = target.remove(0);
-             * } else {
-             * sec = target.remove(0);
-             * }
-             * }
-             * 
-             * }
-             * if (sortedCharFreqList.indexOf(fir.getData()) >= 0) {
-             * sortedCharFreqList.remove(sortedCharFreqList.indexOf(fir.getData()));
-             * }
-             * if (sortedCharFreqList.indexOf(sec.getData()) >= 0) {
-             * sortedCharFreqList.remove(sortedCharFreqList.indexOf(sec.getData()));
-             * }
-             * 
-             * TreeNode anal = new TreeNode(new CharFreq(null, fir.getData().getProbOcc() +
-             * sec.getData().getProbOcc()),
-             * fir, sec);
-             * 
-             * if (target.size() > 0) {
-             * if (target.get(0).getData().getProbOcc() < anal.getData().getProbOcc()) {
-             * target.add(anal);
-             * } else {
-             * target.add(target.get(0));
-             * target.set(0, anal);
-             * }
-             * } else {
-             * target.add(anal);
-             * }
-             */
         }
-        while (target.size() > 1) {
-            fir = target.remove(0);
-            sec = target.remove(0);
-
-            TreeNode anal = new TreeNode(
-                    new CharFreq(null, fir.getData().getProbOcc() + sec.getData().getProbOcc()), fir, sec);
-
-            target.add(anal);
-
-            target = eh(target);
-        }
-
-        if (target.size() > 1) {
-            huffmanRoot = new TreeNode(
-                    new CharFreq(null, target.get(0).getData().getProbOcc() + target.get(1).getData().getProbOcc()),
-                    target.get(0), target.get(1));
-
-        } else if (huffmanRoot == null) {
-            huffmanRoot = target.get(0);
-        }
+        huffmanRoot = target.dequeue();
     }
 
     private void fuckThis(TreeNode fuck, String me) {
