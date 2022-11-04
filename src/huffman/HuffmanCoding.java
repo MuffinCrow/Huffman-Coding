@@ -294,16 +294,19 @@ public class HuffmanCoding {
         }
     }
 
-    /*
-     * private TreeNode fuckThis(TreeNode fuck, TreeNode you) {
-     * if (fuck.getLeft() != null) {
-     * fuckThis(fuck.getLeft(), you);
-     * }
-     * if (fuck.getRight() != null) {
-     * fuckThis(fuck.getRight(), you);
-     * }
-     * }
-     */
+    private void fuckThis(TreeNode fuck, String me) {
+        if (fuck.getLeft() != null) {
+            fuckThis(fuck.getLeft(), me + "0");
+        }
+        if (fuck.getRight() != null) {
+            fuckThis(fuck.getRight(), me + "1");
+        }
+        if (fuck.getLeft() == null && fuck.getRight() == null && fuck.getData() != null) {
+            int temp = (int) fuck.getData().getCharacter();
+            encodings[temp] = me;
+        }
+        return;
+    }
 
     /**
      * Uses huffmanRoot to create a string array of size 128, where each
@@ -314,8 +317,8 @@ public class HuffmanCoding {
      * Set encodings to this array.
      */
     public void makeEncodings() {
-
-        /* Your code goes here */
+        encodings = new String[128];
+        fuckThis(huffmanRoot, "");
     }
 
     /**
@@ -327,8 +330,12 @@ public class HuffmanCoding {
      */
     public void encode(String encodedFile) {
         StdIn.setFile(fileName);
-
-        /* Your code goes here */
+        String fucker = "";
+        while (StdIn.hasNextChar()) {
+            int ugh = (int) StdIn.readChar();
+            fucker += encodings[ugh];
+        }
+        writeBitString(encodedFile, fucker);
     }
 
     /**
@@ -394,8 +401,23 @@ public class HuffmanCoding {
      */
     public void decode(String encodedFile, String decodedFile) {
         StdOut.setFile(decodedFile);
+        TreeNode milf = huffmanRoot;
+        String aaaah = readBitString(encodedFile);
 
-        /* Your code goes here */
+        for (int i = 0; i < aaaah.length(); ++i) {
+
+            if (aaaah.charAt(i) == '0') {
+                milf = milf.getLeft();
+            } else if (aaaah.charAt(i) == '1') {
+                milf = milf.getRight();
+            }
+
+            if (milf.getLeft() == null && milf.getLeft() == null && milf.getData().getCharacter() != null) {
+                StdOut.print(milf.getData().getCharacter());
+                milf = huffmanRoot;
+            }
+        }
+
     }
 
     /**
